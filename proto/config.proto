@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "github.com/FlorinBalint/flosensus/raft/proto";
+
+message Config {
+  // TODO(#2): Define the configs for a raft service
+  // Here go id, listening port, election timeout .etc
+}
