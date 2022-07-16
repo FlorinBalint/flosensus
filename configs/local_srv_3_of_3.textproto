@@ -1,0 +1,23 @@
+# Message: github.com/FlorinBalint/flosensus/raft/proto.Config
+self {
+  id: 3
+  port: 8083
+}
+peers {
+  id: 1
+  port: 8081
+}
+peers {
+  id: 2
+  port: 8082
+}
+
+heartbeat_interval {
+  nanos: 50000000 # 50 milliseconds
+}
+min_election_timeout {
+  nanos: 150000000 # 150 milliseconds
+}
+max_election_timeout {
+  nanos: 150000000 # 150 milliseconds
+}

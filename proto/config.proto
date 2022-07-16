@@ -2,7 +2,47 @@ syntax = "proto3";
 
 option go_package = "github.com/FlorinBalint/flosensus/raft/proto";
 
+import "google/protobuf/duration.proto";
+
+message PersistenceConfig {
+ // TODO(#3): Define the way to persist the state.
+}
+
+// A participant to the Raft distributed system
+message PeerConfig {
+
+  // Id of the Raft server node (required)
+  optional int32 id = 1;
+
+  // Address of the raft service (fallback to localhost)
+  optional string address = 2;
+  
+  // Port listening on 
+  optional int32 port = 3;
+}
+
+// Configuration for a Raft server node
 message Config {
-  // TODO(#2): Define the configs for a raft service
-  // Here go id, listening port, election timeout .etc
+  
+  // This Raft server node (required)
+  optional PeerConfig self = 1;
+  
+  // Other participants of the cluster 
+  repeated PeerConfig peers = 2;
+
+  // Configuration related to persisting the state
+  optional PersistenceConfig persistence = 3;
+
+  // Minimum randomized election timeout.
+  // The Server will wait for a random interval between
+  // min_election_timeout and max_election_timeout to become
+  // a candidate or start a new voting term.
+  optional google.protobuf.Duration min_election_timeout = 4;
+  
+  // Maximum randomized election timeout
+  optional google.protobuf.Duration max_election_timeout = 5;
+
+  // The interval that at which the Leader will send AppendEntries
+  // requests to followers to maintain leadership.
+  optional google.protobuf.Duration heartbeat_interval = 6;
 }
