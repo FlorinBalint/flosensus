@@ -90,7 +90,7 @@ type Server struct {
 	port       int
 	minTimeout time.Duration
 	maxTimeout time.Duration
-	peers      []peer
+	peers      map[int]peer
 
 	mutex sync.RWMutex
 }
@@ -145,8 +145,8 @@ func (rs *Server) activeLoop() {
 	}
 }
 
-func initPeers(peerCfgs []*pb.PeerConfig) ([]peer, error) {
-	var res []peer
+func initPeers(peerCfgs []*pb.PeerConfig) (map[int]peer, error) {
+	res := make(map[int]peer)
 	for _, peerCfg := range peerCfgs {
 		addr := fmt.Sprintf("%v:%v", peerCfg.GetAddress(), peerCfg.GetPort())
 		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -157,7 +157,7 @@ func initPeers(peerCfgs []*pb.PeerConfig) ([]peer, error) {
 			id:     int(peerCfg.GetId()),
 			client: pb.NewRaftClient(conn),
 		}
-		res = append(res, peer)
+		res[peer.id] = peer
 	}
 	return res, nil
 }

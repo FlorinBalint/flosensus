@@ -19,5 +19,5 @@ min_election_timeout {
   nanos: 150000000 # 150 milliseconds
 }
 max_election_timeout {
-  nanos: 150000000 # 150 milliseconds
+  nanos: 300000000 # 300 milliseconds
 }

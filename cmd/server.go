@@ -15,10 +15,18 @@ import (
 )
 
 var (
-	config     = flag.String("config", "", "Config proto to use for the load balancer")
-	configFile = flag.String("config_file", "", "Config file to use for the load balancer")
+	config     = flag.String("config", "", "Config proto to use for the raft service")
+	configFile = flag.String("config_file", "", "Config file to use for the raft service")
 	port       = flag.Int("port", 50051, "The server port")
 )
+
+func overridePortIfNeeded(cfg *pb.Config) {
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "port" {
+			*cfg.GetSelf().Port = int32(*port)
+		}
+	})
+}
 
 func parseConfig(cfg []byte) (*pb.Config, error) {
 	res := &pb.Config{}
@@ -33,14 +41,6 @@ func parseConfigFromFile(cfgPath string) (*pb.Config, error) {
 		return nil, err
 	}
 	return parseConfig(content)
-}
-
-func overridePortIfNeeded(cfg *pb.Config) {
-	flag.Visit(func(f *flag.Flag) {
-		if f.Name == "port" {
-			*cfg.GetSelf().Port = int32(*port)
-		}
-	})
 }
 
 func main() {
@@ -67,7 +67,7 @@ func main() {
 	}
 	err = raftServer.ListenAndServe(context.Background())
 	if errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("Raft server was stopped")
+		fmt.Printf("Raft server has stopped")
 	} else if err != nil {
 		fmt.Printf("Unexpected raft server error: %v\n The server shut down ...", err)
 	}
